@@ -57,14 +57,18 @@ def get_wallpaper ():
 def modify_svg(input_file, output_file, base_color):
     with open(input_file, 'r') as file:
         svg_content = file.read()
-    elements = svg_content.split('<')
+    elements = svg_content.split('\n')
 
-    separator = ''
+    fill_number = 0
+    for element in elements:
+        if 'fill' in element: fill_number += 1
     
     color_index = 0
-    colors = generate_colors(base_color, len(elements))
-    for i in range(1, len(elements)):  # Skip the first element as it's usually the XML declaration
+    colors = generate_colors(base_color, fill_number)
+    for i in range(0, len(elements)):
         element = elements[i]
+
+        separator = ''
         if 'fill:' in element:
             separator = 'fill:'
         else:
@@ -82,7 +86,7 @@ def modify_svg(input_file, output_file, base_color):
         
         color_index += 1
     
-    modified_svg_content = '<'.join(elements)
+    modified_svg_content = '\n'.join(elements)
     
     with open(output_file, 'w') as file:
         file.write(modified_svg_content)
